@@ -43,6 +43,7 @@ createCohorts <- function(connectionDetails,
                           cohortDatabaseSchema,
                           cohortTable = "cohort",
                           oracleTempSchema,
+			  cohortsToCreateCsv,
                           outputFolder) {
   if (!file.exists(outputFolder))
     dir.create(outputFolder)
@@ -54,6 +55,7 @@ createCohorts <- function(connectionDetails,
                  cohortDatabaseSchema = cohortDatabaseSchema,
                  cohortTable = cohortTable,
                  oracleTempSchema = oracleTempSchema,
+		 pathToCsv = cohortsToCreateCsv,
                  outputFolder = outputFolder)
   
   # Check number of subjects per cohort:
@@ -67,14 +69,13 @@ createCohorts <- function(connectionDetails,
                                            study_cohort_table = cohortTable)
   counts <- DatabaseConnector::querySql(conn, sql)
   colnames(counts) <- SqlRender::snakeCaseToCamelCase(colnames(counts))
-  counts <- addCohortNames(counts)
+  counts <- addCohortNames(counts,CohortsToCreateCsv)
   utils::write.csv(counts, file.path(outputFolder, "CohortCounts.csv"), row.names = FALSE)
   
   DatabaseConnector::disconnect(conn)
 }
 
-addCohortNames <- function(data, IdColumnName = "cohortDefinitionId", nameColumnName = "cohortName") {
-  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "EHDENRAPrediction")
+addCohortNames <- function(data, pathToCsv, IdColumnName = "cohortDefinitionId", nameColumnName = "cohortName") {
   cohortsToCreate <- utils::read.csv(pathToCsv)
   
   idToName <- data.frame(cohortId = c(cohortsToCreate$cohortId),

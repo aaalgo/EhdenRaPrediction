@@ -5,11 +5,11 @@
 #'
 #' @param outputLocation    Directory location where you want the protocol written to
 #' @export
-createPlpProtocol <- function(outputLocation = getwd()){
+createPlpProtocol <- function(outputLocation = getwd(), predictionAnalysisListFile){
   
-  predictionAnalysisListFile <- system.file("settings",
-                                            "predictionAnalysisList.json",
-                                            package = "EHDENRAPrediction")
+  #predictionAnalysisListFile <- system.file("settings",
+  #                                          "predictionAnalysisList.json",
+  #                                          package = "EHDENRAPrediction")
   
   #figure1 <- 'vignettes/Figure1.png'
   figure1 <- system.file("doc",

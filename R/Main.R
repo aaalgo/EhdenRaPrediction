@@ -106,14 +106,26 @@ execute <- function(connectionDetails,
                     createJournalDocument = F,
                     analysisIdDocument = 1,
                     verbosity = "INFO",
+		    cohortsToCreateCsv = NULL,
+		    predictionAnalysisListJson = NULL,
                     cdmVersion = 5) {
   if (!file.exists(outputFolder))
     dir.create(outputFolder, recursive = TRUE)
+
+  if (is.null(cohortsToCreateCsv)) {
+     cohortsToCreateCsv <- system.file("settings", "CohortsToCreate.csv", package = "EHDENRAPrediction")
+  }
+
+  if (is.null(predictionAnalysisListJson)) {
+     predictionAnalysisListJson <- system.file("settings",
+                                            "predictionAnalysisList.json",
+                                             package = "EHDENRAPrediction")
+  }
   
   ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
   
   if(createProtocol){
-    createPlpProtocol(outputFolder)
+    createPlpProtocol(outputFolder, predictionAnalysisListJson)
   }
   
   if (createCohorts) {
@@ -123,15 +135,13 @@ execute <- function(connectionDetails,
                   cohortDatabaseSchema = cohortDatabaseSchema,
                   cohortTable = cohortTable,
                   oracleTempSchema = oracleTempSchema,
+		  cohortsToCreateCsv = cohortsToCreateCsv,
                   outputFolder = outputFolder)
   }
   
   if(runAnalyses){
     ParallelLogger::logInfo("Running predictions")
-    predictionAnalysisListFile <- system.file("settings",
-                                              "predictionAnalysisList.json",
-                                              package = "EHDENRAPrediction")
-    predictionAnalysisList <- PatientLevelPrediction::loadPredictionAnalysisList(predictionAnalysisListFile)
+    predictionAnalysisList <- PatientLevelPrediction::loadPredictionAnalysisList(predictionAnalysisListJson)
     predictionAnalysisList$connectionDetails = connectionDetails
     predictionAnalysisList$cdmDatabaseSchema = cdmDatabaseSchema
     predictionAnalysisList$cdmDatabaseName = cdmDatabaseName
@@ -160,10 +170,10 @@ execute <- function(connectionDetails,
   }
   
   if(createValidationPackage){
-    predictionAnalysisListFile <- system.file("settings",
-                                              "predictionAnalysisList.json",
-                                              package = "EHDENRAPrediction")
-    jsonSettings <-  tryCatch({Hydra::loadSpecifications(file=predictionAnalysisListFile)},
+    #predictionAnalysisListFile <- system.file("settings",
+    #                                          "predictionAnalysisList.json",
+    #                                          package = "EHDENRAPrediction")
+    jsonSettings <-  tryCatch({Hydra::loadSpecifications(file=predictionAnalysisListJson)},
                               error=function(cond) {
                                 stop('Issue with json file...')
                               })
@@ -187,10 +197,10 @@ execute <- function(connectionDetails,
   }
   
   if(createJournalDocument){
-    predictionAnalysisListFile <- system.file("settings",
-                                              "predictionAnalysisList.json",
-                                              package = "EHDENRAPrediction")
-    jsonSettings <-  tryCatch({Hydra::loadSpecifications(file=predictionAnalysisListFile)},
+    #predictionAnalysisListFile <- system.file("settings",
+    #                                          "predictionAnalysisList.json",
+    #                                          package = "EHDENRAPrediction")
+    jsonSettings <-  tryCatch({Hydra::loadSpecifications(file=predictionAnalysisListJson)},
                               error=function(cond) {
                                 stop('Issue with json file...')
                               })
