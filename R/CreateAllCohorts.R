@@ -69,14 +69,14 @@ createCohorts <- function(connectionDetails,
                                            study_cohort_table = cohortTable)
   counts <- DatabaseConnector::querySql(conn, sql)
   colnames(counts) <- SqlRender::snakeCaseToCamelCase(colnames(counts))
-  counts <- addCohortNames(counts,CohortsToCreateCsv)
+  counts <- addCohortNames(counts,cohortsToCreateCsv)
   utils::write.csv(counts, file.path(outputFolder, "CohortCounts.csv"), row.names = FALSE)
   
   DatabaseConnector::disconnect(conn)
 }
 
-addCohortNames <- function(data, pathToCsv, IdColumnName = "cohortDefinitionId", nameColumnName = "cohortName") {
-  cohortsToCreate <- utils::read.csv(pathToCsv)
+addCohortNames <- function(data, cohortsToCreateCsv, IdColumnName = "cohortDefinitionId", nameColumnName = "cohortName") {
+  cohortsToCreate <- utils::read.csv(cohortsToCreateCsv)
   
   idToName <- data.frame(cohortId = c(cohortsToCreate$cohortId),
                          cohortName = c(as.character(cohortsToCreate$name)))
