@@ -20,7 +20,7 @@
                            cohortDatabaseSchema,
                            cohortTable,
                            oracleTempSchema,
-			   pathToCsv,
+			   cohortsToCreateCsv,
                            outputFolder) {
   
   # Create study cohort table structure:
@@ -36,7 +36,7 @@
   
   # Instantiate cohorts:
   # pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "EHDENRAPrediction")
-  cohortsToCreate <- utils::read.csv(pathToCsv)
+  cohortsToCreate <- utils::read.csv(cohortsToCreateCsv)
   for (i in 1:nrow(cohortsToCreate)) {
     writeLines(paste("Creating cohort:", cohortsToCreate$name[i]))
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename = paste0(cohortsToCreate$name[i], ".sql"),

@@ -55,7 +55,7 @@ createCohorts <- function(connectionDetails,
                  cohortDatabaseSchema = cohortDatabaseSchema,
                  cohortTable = cohortTable,
                  oracleTempSchema = oracleTempSchema,
-		 pathToCsv = cohortsToCreateCsv,
+		 cohortsToCreateCsv = cohortsToCreateCsv,
                  outputFolder = outputFolder)
   
   # Check number of subjects per cohort:
